@@ -1,33 +1,33 @@
 package tests;
 
+import java.io.IOException;
+
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import data.DataFile;
 import pages.LoginPage;
+import utilities.Xls_Reader;
 
 public class LoginTest {
+
+	
+	Xls_Reader d = new Xls_Reader("/Users/raashidshaikh/Desktop/QA/SeleniumWorkSpace/BasicFrameWork/ValueKeeper.xlsx");
+    
+	
 	LoginPage lp = new LoginPage();
 	
-	String EmailSpecChar = "abc*&";
-	String WrongPass = "wrongPass";
-	String EmailNoSPecChar = "abc";
-	String SpecCharErr = "Please enter a username or card number without special characters.";
-	String EmptyEmailErr = "Please enter your username or card number.";
-	String EmptyPassErr = "Please enter your password.";
 	
+	
+	DataFile df = new DataFile();
 	
   @Test(priority=1)
   public void loginWithSpecialCharacters() throws InterruptedException {
-	  	lp.login(EmailSpecChar,WrongPass);
+	  	lp.login(df.EmailSpecChar,df.WrongPass);
 
-		Thread.sleep(1000);
-		
-		String ExpextedErr = 	SpecCharErr;
-		String ActualErr = lp.readEmailErr();
-
-		Assert.assertEquals(ExpextedErr, ActualErr);
+		Assert.assertEquals(lp.readEmailErr(), df.SpecCharErr);
 
   }
   
@@ -35,17 +35,9 @@ public class LoginTest {
   @Test(priority=2)
   public void loginWithEmptyUserTest() throws InterruptedException {
 	  	
-		lp.login("",WrongPass);
-		
+		lp.login("",df.WrongPass);
 
-		Thread.sleep(1000);
-		
-		String ExpextedErr =EmptyEmailErr;
-	
-		String ActualErr = lp.readEmailErr();
-		System.out.println(ActualErr);
-
-		Assert.assertEquals(ExpextedErr, ActualErr);
+		Assert.assertEquals(lp.readEmailErr(), df.EmptyEmailErr);
 	
   }
   
@@ -53,19 +45,13 @@ public class LoginTest {
   public void loginWithEmptyPassTest() throws InterruptedException {
 		lp.login("email","");
 	
-		Thread.sleep(1000);
-		
-		String ExpextedErr = EmptyPassErr;
 	
-		String ActualErr = lp.readPassErr();
-		System.out.println(ActualErr);
-	
-		Assert.assertEquals(ExpextedErr, ActualErr);
+		Assert.assertEquals(lp.readPassErr(), df.EmptyPassErr);
 
   }
   
   @BeforeMethod
-  public void beforeMethod() {
+  public void beforeMethod() throws IOException {
 	  
 		  lp.openBrowser();
 		  lp.openLoginPage();

@@ -1,21 +1,78 @@
 package pages;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
 
 public class LoginPage {
-
+	
 	
 	WebDriver driver;
+	/*
+	WebElement email = driver.findElement(By.id("usernameInput-input"));
+	WebElement pass = driver.findElement(By.id("password-input"));
+	WebElement SignIn = driver.findElement(By.id("signIn"));
+	WebElement EmailErr = driver.findElement(By.id("UsernameTextField__errors-usernameInput"));
+	WebElement PassErr = driver.findElement(By.id("PasswordTextField__errors-password"));*/
 	
-	public void openBrowser() {
-		driver = new FirefoxDriver();
+	@FindBy(id="usernameInput-input")
+	public WebElement email;
+	
+	@FindBy(id="password-input")
+	public WebElement pass;
+	
+	@FindBy(id="signIn")
+	public WebElement SignIn;
+	
+	@FindBy(id="UsernameTextField__errors-usernameInput")
+	public WebElement EmailErr;
+	
+	@FindBy(id="PasswordTextField__errors-password")
+	public WebElement PassErr;
+	
+	
+	
+	public void openBrowser() throws IOException {
+		FileInputStream file = new FileInputStream("/Users/raashidshaikh/Desktop/QA/SeleniumWorkSpace/BasicFrameWork/src/prop.properties");
+		
+		Properties prop = new Properties();
+		
+		prop.load(file);
+		
+		String browser = prop.getProperty("Browser");
+		
+		if(browser.equals("Chrome")) {
+			
+			driver = new ChromeDriver();
+			
+		}
+		
+		else if(browser.equals("Firefox")){
+			driver = new FirefoxDriver();
+			
+		}
+		
+		else {
+			System.out.println("Please input the driver");
+		}
+		
+		PageFactory.initElements(driver, this);
+		
+		
 	}
 	
 	public void closeBrowser() {
 		driver.quit();
 	}
+	
 	
 	
 	public void openLoginPage() {
@@ -24,20 +81,20 @@ public class LoginPage {
 
 	}
 	public void login(String a, String b) throws InterruptedException {
-		driver.findElement(By.id("usernameInput-input")).sendKeys(a);
-		driver.findElement(By.id("password-input")).sendKeys(b);
-		driver.findElement(By.id("signIn")).click();
+		email.sendKeys(a);
+		pass.sendKeys(b);
+		SignIn.click();
 		Thread.sleep(1000);
 	}
 	
 	public String readEmailErr() {
-				String ActualErr = driver.findElement(By.id("UsernameTextField__errors-usernameInput")).getText();
+				String ActualErr = EmailErr.getText();
 				return ActualErr;
 		
 	}
 	
 	public String readPassErr() {
-		String ActualErr = driver.findElement(By.id("PasswordTextField__errors-password")).getText();
+		String ActualErr = PassErr.getText();
 		return ActualErr;
 		
 	}
